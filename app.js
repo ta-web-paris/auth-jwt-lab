@@ -3,6 +3,9 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://localhost/blog-lab", { useMongoClient: true });
 
 const app = express();
 
