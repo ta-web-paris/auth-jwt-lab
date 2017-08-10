@@ -54,6 +54,18 @@ const authRoutes = require("./routes/auth");
 app.use('/', index);
 app.use('/api', authRoutes);
 
+// This is an example of protected route
+app.get(
+  "/api/secret",
+  // this is protecting the route and giving us access to
+  // req.user
+  passport.authenticate("jwt", config.jwtSession),
+  (req, res) => {
+    // send the user his own information
+    res.json(req.user);
+  }
+);
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
