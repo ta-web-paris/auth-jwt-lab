@@ -53,6 +53,13 @@ userSchema.plugin(passportLocalMongoose);
 module.exports = mongoose.model('User', userSchema);
 ```
 
+Don't forget to connect to Mongo, otherwise your `app.js`:
+
+```js
+const mongoose = require('mongoose');
+mongoose.connect("mongodb://localhost/blog-lab", { useMongoClient: true });
+```
+
 ### Signup Route
 
 Now we can use the User model to signup users. As always, let's create the `routes/auth.js`:
@@ -175,7 +182,7 @@ const strategy = new Strategy(
 passport.use(strategy);
 ```
 
-Finally we need to add the `/api/login` route in `auth.js`, but first let's require some packages at the top of the file:
+Finally we need to add the `/api/login` route in `routes/auth.js`, but first let's require some packages at the top of the file:
 
 ```js
 const jwt = require("jwt-simple");
