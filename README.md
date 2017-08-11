@@ -1,5 +1,19 @@
 # Authentication with JWT
 
+## Development setup
+
+Before running the project, you have to install the dependencies wit
+
+
+```sh
+npm install
+```
+
+and run the development server with
+
+```sh
+npm run dev
+```
 
 ## Signup
 
