@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require("jwt-simple");
+const passport = require("passport");
 const router = express.Router();
 const User = require('../models/user');
 const config = require("../config");
@@ -68,5 +69,15 @@ router.post("/login", (req, res) => {
     res.sendStatus(401);
   }
 });
+
+router.get('/auth/facebook', passport.authenticate('facebook'));
+
+router.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/' }),
+  (req, res) => {
+    // Successful authentication, redirect home.
+    res.json(req.user)
+  });
 
 module.exports = router;

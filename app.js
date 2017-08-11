@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -9,6 +10,7 @@ const passport = require("passport");
 const User = require("./models/user");
 const config = require("./config");
 const { Strategy, ExtractJwt } = require("passport-jwt");
+const FacebookStrategy = require('passport-facebook');
 
 mongoose.connect("mongodb://localhost/blog-lab", { useMongoClient: true });
 
@@ -47,6 +49,33 @@ const strategy = new Strategy(
 );
 // tell pasport to use it
 passport.use(strategy);
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.FB_CLIENT_ID,
+  clientSecret: process.env.FB_CLIENT_SECRET,
+  callbackURL: "http://localhost:3000/api/auth/facebook/callback",
+  // all fields: https://developers.facebook.com/docs/graph-api/reference/v2.10/user
+  profileFields: ['id', 'displayName', 'email']
+}, (accessToken, refreshToken, profile, cb) => {
+  User.findOne({
+    facebookId: profile.id
+  }).then((user) => {
+    if (user) {
+      console.log('FOUND', user)
+      cb(err, user);
+    } else {
+      const user = new User({
+        // we need a username
+        username: profile.email,
+        name: profile.displayName,
+        facebookId: profile.id
+      })
+      return user.save()
+    }
+  }).then((user) => {
+    cb(err, user);
+  });
+}));
 
 const index = require('./routes/index');
 const authRoutes = require("./routes/auth");
