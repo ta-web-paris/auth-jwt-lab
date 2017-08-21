@@ -261,12 +261,12 @@ app.get(
 ```
 
 But... how do we pass the token we got earlier when doing a request?
-We have to pass it in the headers of all the requests we make. When using Postman, head over to the _Headers_ tab and add a new entry with `Authorization` as the key and `JWT <replace this with the jwt>` as the value.
+We have to pass it in the headers of all the requests we make. When using Postman, head over to the _Headers_ tab and add a new entry with `Authorization` as the key and `Bearer <replace this with the jwt>` as the value.
 
 When building a front end application you'll probably use something like [axios](https://github.com/mzabriskie/axios). In that case you need to set the token like this:
 
 ```js
-axios.defaults.headers.common['Authorization'] = 'JWT ' + <replace this with the jwt>;
+axios.defaults.headers.common['Authorization'] = 'Bearer ' + <replace this with the jwt>;
 ```
 
 This will make any request send the token in the headers of such request.
