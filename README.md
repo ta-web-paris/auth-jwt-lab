@@ -95,6 +95,8 @@ router.post('/signup', (req, res, next) => {
   })
 });
 
+module.exports = router;
+
 ```
 
 Don't forget to add the `authRoutes` to the `app` in `app.js`:
@@ -163,7 +165,7 @@ const strategy = new Strategy(
     secretOrKey: config.jwtSecret,
     // This options tells the strategy to extract the token
     // from the header of the request
-    jwtFromRequest: ExtractJwt.fromAuthHeader()
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
   },
   (payload, done) => {
     // payload is the object we encrypted at the route /api/token
