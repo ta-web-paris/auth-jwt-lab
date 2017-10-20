@@ -174,7 +174,7 @@ Now we can add a new `login` _POST_ route:
 ```js
 // User.authenticate() returns a function
 const authenticate = User.authenticate();
-router.post("/login", (req, res) => {
+router.post("/login", (req, res, next) => {
   const { username, password } = req.body;
   // check if we have a username and password
   if (username && password) {
