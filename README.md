@@ -205,11 +205,13 @@ router.post("/login", (req, res) => {
     authenticate(username, password, (err, user, failed) => {
       if (err) {
         // an unexpected error from the database
-        return res.status(500).json(err);
+        return next(err);
       }
       if (failed) {
         // failed logging (bad password, too many attempts, etc)
-        return res.status(401).json(failed.message);
+        return res.status(401).json({
+          error: failed.message
+        });
       }
       if (user) {
         // success!! Save the user id
