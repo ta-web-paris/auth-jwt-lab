@@ -1,17 +1,13 @@
 const express = require('express');
-const jwt = require("jwt-simple");
+const jwt = require('jwt-simple');
 const router = express.Router();
 const User = require('../models/user');
-const config = require("../config");
+const config = require('../config');
 
 router.post('/signup', (req, res, next) => {
   // extract the info we need from the body
   // of the request
-  const {
-    username,
-    name,
-    password
-  } = req.body;
+  const { username, name, password } = req.body;
 
   // create the new user
   // notice how we don't pass the password because
@@ -19,20 +15,20 @@ router.post('/signup', (req, res, next) => {
   // for us
   const user = new User({
     username,
-    name
+    name,
   });
 
-  User.register(user, password, (err) => {
+  User.register(user, password, err => {
     if (err) {
-      return next(err)
+      return next(err);
     }
-    res.json({ success: true })
-  })
+    res.json({ success: true });
+  });
 });
 
 // User.authenticate() returns a function
 const authenticate = User.authenticate();
-router.post("/login", (req, res) => {
+router.post('/login', (req, res, next) => {
   const { username, password } = req.body;
   // check if we have a username and password
   if (username && password) {
@@ -40,11 +36,13 @@ router.post("/login", (req, res) => {
     authenticate(username, password, (err, user, failed) => {
       if (err) {
         // an unexpected error from the database
-        return res.status(500).json(err);
+        return next(err);
       }
       if (failed) {
         // failed logging (bad password, too many attempts, etc)
-        return res.status(401).json(failed.message);
+        return res.status(401).json({
+          error: failed.message,
+        });
       }
       if (user) {
         // success!! Save the user id
@@ -52,7 +50,7 @@ router.post("/login", (req, res) => {
         // the id is usually enough because we can get back
         // the actual user by fetching the database later
         const payload = {
-          id: user.id
+          id: user.id,
         };
         // generate a token and send it
         // this token will contain the user.id encrypted

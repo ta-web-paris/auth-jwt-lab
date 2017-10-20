@@ -3,14 +3,14 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const passport = require("passport");
-const User = require("./models/user");
-const config = require("./config");
-const { Strategy, ExtractJwt } = require("passport-jwt");
+const passport = require('passport');
+const User = require('./models/user');
+const config = require('./config');
+const { Strategy, ExtractJwt } = require('passport-jwt');
 
-mongoose.connect("mongodb://localhost/blog-lab", { useMongoClient: true });
+mongoose.connect('mongodb://localhost/blog-lab', { useMongoClient: true });
 
 const app = express();
 
@@ -30,7 +30,7 @@ const strategy = new Strategy(
     secretOrKey: config.jwtSecret,
     // This options tells the strategy to extract the token
     // from the header of the request
-    jwtFromRequest: ExtractJwt.fromAuthHeader()
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   },
   (payload, done) => {
     // payload is the object we encrypted at the route /api/token
@@ -40,7 +40,7 @@ const strategy = new Strategy(
         // make the user accessible in req.user
         done(null, user);
       } else {
-        done(new Error("User not found"));
+        done(new Error('User not found'));
       }
     });
   }
@@ -49,17 +49,17 @@ const strategy = new Strategy(
 passport.use(strategy);
 
 const index = require('./routes/index');
-const authRoutes = require("./routes/auth");
+const authRoutes = require('./routes/auth');
 
 app.use('/', index);
 app.use('/api', authRoutes);
 
 // This is an example of protected route
 app.get(
-  "/api/secret",
+  '/api/secret',
   // this is protecting the route and giving us access to
   // req.user
-  passport.authenticate("jwt", config.jwtSession),
+  passport.authenticate('jwt', config.jwtSession),
   (req, res) => {
     // send the user his own information
     res.json(req.user);
@@ -78,10 +78,8 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   // return the error message only in development mode
   res.json({
-    message: err.message
-    error: req.app.get('env') === 'development' ? err.message : {}
+    error: req.app.get('env') === 'development' ? err : {},
   });
 });
 
 module.exports = app;
-
