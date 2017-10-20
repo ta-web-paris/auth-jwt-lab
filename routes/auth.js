@@ -1,18 +1,14 @@
 const express = require('express');
-const jwt = require("jwt-simple");
-const passport = require("passport");
+const jwt = require('jwt-simple');
+const passport = require('passport');
 const router = express.Router();
 const User = require('../models/user');
-const config = require("../config");
+const config = require('../config');
 
 router.post('/signup', (req, res, next) => {
   // extract the info we need from the body
   // of the request
-  const {
-    username,
-    name,
-    password
-  } = req.body;
+  const { username, name, password } = req.body;
 
   // create the new user
   // notice how we don't pass the password because
@@ -20,20 +16,20 @@ router.post('/signup', (req, res, next) => {
   // for us
   const user = new User({
     username,
-    name
+    name,
   });
 
-  User.register(user, password, (err) => {
+  User.register(user, password, err => {
     if (err) {
-      return next(err)
+      return next(err);
     }
-    res.json({ success: true })
-  })
+    res.json({ success: true });
+  });
 });
 
 // User.authenticate() returns a function
 const authenticate = User.authenticate();
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
   const { username, password } = req.body;
   // check if we have a username and password
   if (username && password) {
@@ -53,7 +49,7 @@ router.post("/login", (req, res) => {
         // the id is usually enough because we can get back
         // the actual user by fetching the database later
         const payload = {
-          id: user.id
+          id: user.id,
         };
         // generate a token and send it
         // this token will contain the user.id encrypted
@@ -74,10 +70,15 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 
 router.get(
   '/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/' }),
+  passport.authenticate('facebook', { failureRedirect: '/', session: false }),
   (req, res) => {
-    // Successful authentication, redirect home.
-    res.json(req.user)
-  });
+    console.log(req.user);
+    const payload = {
+      id: req.user.id,
+    };
+    const token = jwt.encode(payload, config.jwtSecret);
+    res.json({ token });
+  }
+);
 
 module.exports = router;
