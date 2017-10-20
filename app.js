@@ -27,10 +27,10 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   // return the error message only in development mode
-  res.json(req.app.get('env') === 'development'
-    ? err.message
-    : {}
-  );
+  res.json({
+    message: err.message
+    error: req.app.get('env') === 'development' ? err.message : {}
+  });
 });
 
 module.exports = app;
