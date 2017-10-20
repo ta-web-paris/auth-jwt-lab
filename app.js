@@ -20,7 +20,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-passport.initialize();
+app.use(passport.initialize());
 // Create the strategy for JWT
 const strategy = new Strategy(
   {
