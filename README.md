@@ -155,7 +155,7 @@ const { Strategy, ExtractJwt } = require("passport-jwt");
 Then, just after adding the `bodyParser` middleware and before adding our `authRoutes`, initialise passport and add the strategy:
 
 ```js
-passport.initialize();
+app.use(passport.initialize())
 // Create the strategy for JWT
 const strategy = new Strategy(
   {
