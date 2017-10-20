@@ -32,11 +32,12 @@ const strategy = new Strategy(
     secretOrKey: config.jwtSecret,
     // This options tells the strategy to extract the token
     // from the header of the request
-    jwtFromRequest: ExtractJwt.fromAuthHeader(),
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   },
   (payload, done) => {
     // payload is the object we encrypted at the route /api/token
     // We get the user id, make sure the user exist by looking it up
+    console.log('Finding', payload);
     User.findById(payload.id).then(user => {
       if (user) {
         // make the user accessible in req.user
